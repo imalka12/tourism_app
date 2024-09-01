@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tourism_app/common/tour_type_slider.dart';
+import 'package:tourism_app/models/category.dart';
 import 'package:tourism_app/pages/activities.dart';
 import 'package:tourism_app/pages/date_range_page.dart';
 import 'package:tourism_app/pages/user_profile.dart';
-import 'package:tourism_app/pages/vehicles.dart';
+import 'package:tourism_app/services/category_service.dart';
 
 class Categories extends StatefulWidget {
   const Categories({super.key});
@@ -41,7 +43,7 @@ class _CategoriesState extends State<Categories> {
                       BorderRadius.vertical(top: Radius.circular(20.0)),
                 ),
                 builder: (BuildContext context) {
-                  return Container(
+                  return SizedBox(
                     height: MediaQuery.of(context).size.height,
                     child: UserProfile(),
                   );
@@ -63,20 +65,42 @@ class _CategoriesState extends State<Categories> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Beach & Coastal Activities',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Slider(
-                  value: preferencePercentage,
-                  min: 0.0,
-                  max: 1.0,
-                  divisions: 100,
-                  label: '${(preferencePercentage * 100).toStringAsFixed(0)}%',
-                  onChanged: (double newValue) {
-                    setState(() {
-                      preferencePercentage = newValue;
-                    });
+                FutureBuilder(
+                  future: getCategories(),
+                  builder: (context, snapshot) {
+                    // show a loader as a placeholder if the connectin state is not done
+                    if (snapshot.connectionState != ConnectionState.done) {
+                      return CircularProgressIndicator();
+                    }
+
+                    if (snapshot.hasError) {
+                      print('error is ' + snapshot.error.toString());
+                      return const Text('Failed to load tour types');
+                    }
+
+                    if (snapshot.hasData && snapshot.data == null) {
+                      return const Text('No tour types available.');
+                    }
+
+                    List<Category>? data = snapshot.data;
+
+                    return ListView.separated(
+                        itemBuilder: (context, index) {
+                          // return the actual widget
+                          Category cat = data[index];
+                          return TourTypeSlider(
+                            label: cat.title!,
+                            onSliderChange: (value) {
+                              print('${cat.title} - value: $value');
+                            },
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(
+                            height: 16.0,
+                          );
+                        },
+                        itemCount: data!.length);
                   },
                 ),
               ],

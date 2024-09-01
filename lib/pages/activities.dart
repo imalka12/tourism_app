@@ -33,7 +33,7 @@ class Activities extends StatelessWidget {
                       BorderRadius.vertical(top: Radius.circular(20.0)),
                 ),
                 builder: (BuildContext context) {
-                  return Container(
+                  return SizedBox(
                     height: MediaQuery.of(context).size.height,
                     child: UserProfile(),
                   );

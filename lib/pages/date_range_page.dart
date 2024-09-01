@@ -71,7 +71,7 @@ class _DateRangePageState extends State<DateRangePage>
           onPressed: () {
             Navigator.pop(
               context,
-              MaterialPageRoute(builder: (context) => const UserDetails()),
+              MaterialPageRoute(builder: (context) => UserDetailsPage()),
             );
           },
         ),
@@ -87,7 +87,7 @@ class _DateRangePageState extends State<DateRangePage>
                       BorderRadius.vertical(top: Radius.circular(20.0)),
                 ),
                 builder: (BuildContext context) {
-                  return Container(
+                  return SizedBox(
                     height: MediaQuery.of(context).size.height,
                     child: UserProfile(),
                   );
@@ -106,11 +106,9 @@ class _DateRangePageState extends State<DateRangePage>
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Container(
-                      child: Image.asset(
-                        'assets/date-picker.png',
-                        height: 300,
-                      ),
+                    child: Image.asset(
+                      'assets/date-picker.png',
+                      height: 300,
                     ),
                   ),
                   const SizedBox(height: 20),

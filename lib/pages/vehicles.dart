@@ -57,7 +57,7 @@ class _VehiclesState extends State<Vehicles> {
                       BorderRadius.vertical(top: Radius.circular(20.0)),
                 ),
                 builder: (BuildContext context) {
-                  return Container(
+                  return SizedBox(
                     height: MediaQuery.of(context).size.height,
                     child: UserProfile(),
                   );
