@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tourism_app/pages/categories.dart';
 import 'package:tourism_app/pages/user_profile.dart';
 import 'package:tourism_app/pages/vehicles.dart';
+import 'package:tourism_app/services/activity_service.dart';
 
 class Activities extends StatelessWidget {
   const Activities({super.key});
@@ -54,72 +55,92 @@ class PreferencesScreen extends StatefulWidget {
 }
 
 class _PreferencesScreenState extends State<PreferencesScreen> {
-  final Map<String, bool> _activities = {
-    'Reading': false,
-    'Traveling': false,
-    'Cooking': false,
-    'Sports': false,
-    'Music': false,
-  };
-
-  String selectedActivitiesText = "";
-
-  void _submitPreferences() {
-    List<String> selectedActivities = _activities.entries
-        .where((entry) => entry.value)
-        .map((entry) => entry.key)
-        .toList();
-    setState(() {
-      selectedActivitiesText = selectedActivities.join(', ');
-    });
-  }
+  final Map<String, bool> _activities = {};
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'What type of activities you like?',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          Expanded(
-            child: ListView(
-              children: _activities.keys.map((String key) {
-                return CheckboxListTile(
-                  title: Text(key),
-                  value: _activities[key],
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _activities[key] = value!;
-                    });
-                  },
-                );
-              }).toList(),
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {});
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'What type of activities you like?',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Vehicles()));
+            Expanded(
+              // child: ListView(
+              //   children: _activities.keys.map((String key) {
+              //     return CheckboxListTile(
+              //       title: Text(key),
+              //       value: _activities[key],
+              //       onChanged: (bool? value) {
+              //         setState(() {
+              //           _activities[key] = value!;
+              //         });
+              //       },
+              //     );
+              //   }).toList(),
+              // ),
+
+              child: FutureBuilder(
+                future: getActivities(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (snapshot.hasError) {
+                    return const Text('Failed to load activities');
+                  }
+
+                  var data = snapshot.data;
+                  return ListView.builder(
+                    itemCount: data!.length,
+                    itemBuilder: (context, index) {
+                      return CheckboxListTile(
+                        title: Text(data[index].title!),
+                        value: _activities[data[index].title] ?? false,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _activities[data[index].title!] = value!;
+                          });
+                        },
+                      );
+                    },
+                  );
                 },
-                icon: const Icon(Icons.arrow_forward),
-                label: const Text("Next"),
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  textStyle: const TextStyle(fontSize: 20),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Vehicles()));
+                  },
+                  icon: const Icon(Icons.arrow_forward),
+                  label: const Text("Next"),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
+                    textStyle: const TextStyle(fontSize: 20),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

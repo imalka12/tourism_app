@@ -2,9 +2,10 @@ import "package:flutter/material.dart";
 import "package:hive_flutter/hive_flutter.dart";
 import "package:tourism_app/models/activity.dart";
 import "package:tourism_app/models/category.dart";
+import "package:tourism_app/models/hotel.dart";
 import "package:tourism_app/models/user_details.dart";
+import "package:tourism_app/models/vehicle.dart";
 import "package:tourism_app/pages/home_page.dart";
-import 'package:hive/hive.dart';
 
 void main() async {
   //init flutter
@@ -14,10 +15,8 @@ void main() async {
   Hive.registerAdapter(UserDetailsAdapter());
   Hive.registerAdapter(CategoryAdapter());
   Hive.registerAdapter(ActivityAdapter());
-
-  // await Hive.openBox<UserDetails>('user_details');
-  // await Hive.openBox<Category>('category');
-  // await Hive.openBox<Activity>('activity');
+  Hive.registerAdapter(VehicleAdapter());
+  Hive.registerAdapter(HotelAdapter());
 
   runApp(const MyApp());
 }

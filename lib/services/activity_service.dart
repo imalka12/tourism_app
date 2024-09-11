@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:tourism_app/models/category.dart';
+import 'package:tourism_app/models/activity.dart';
 
 const API_URL = 'http://192.168.8.101:8000/api';
 // const API_URL = 'http://10.0.2.2:8000/api';
@@ -7,9 +7,9 @@ const API_URL = 'http://192.168.8.101:8000/api';
 final dio = Dio();
 
 /// get tour types from the backend API
-Future<List<Category>> getCategories() async {
+Future<List<Activity>> getActivities() async {
   try {
-    Response response = await dio.get('$API_URL/get-tour-types',
+    Response response = await dio.get('$API_URL/get-activities',
         options: Options(headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -17,14 +17,14 @@ Future<List<Category>> getCategories() async {
 
     if (response.statusCode == 200) {
       var data = response.data as List;
-      var categories = data.map((e) => Category.fromJson(e)).toList();
-      return categories;
+      var activities = data.map((e) => Activity.fromJson(e)).toList();
+      return activities;
     } else {
       // Handle other status codes as needed
-      return <Category>[];
+      return <Activity>[];
     }
   } catch (e) {
     print('Error fetching categories: $e');
-    return <Category>[]; // Return an empty list in case of an error
+    return <Activity>[]; // Return an empty list in case of an error
   }
 }

@@ -53,78 +53,90 @@ class _CategoriesState extends State<Categories> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'What type of holidays you prefer?',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                FutureBuilder(
-                  future: getCategories(),
-                  builder: (context, snapshot) {
-                    // show a loader as a placeholder if the connectin state is not done
-                    if (snapshot.connectionState != ConnectionState.done) {
-                      return CircularProgressIndicator();
-                    }
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {});
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'What type of holidays you prefer?',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    height: 600,
+                    child: FutureBuilder(
+                      future: getCategories(),
+                      builder: (context, snapshot) {
+                        // show a loader as a placeholder if the connectin state is not done
+                        if (snapshot.connectionState != ConnectionState.done) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
-                    if (snapshot.hasError) {
-                      print('error is ' + snapshot.error.toString());
-                      return const Text('Failed to load tour types');
-                    }
+                        if (snapshot.hasError) {
+                          return const Text('Failed to load tour types');
+                        }
 
-                    if (snapshot.hasData && snapshot.data == null) {
-                      return const Text('No tour types available.');
-                    }
+                        if (snapshot.hasData && snapshot.data == null) {
+                          return const Text('No tour types available.');
+                        }
 
-                    List<Category>? data = snapshot.data;
+                        List<Category>? data = snapshot.data;
 
-                    return ListView.separated(
-                        itemBuilder: (context, index) {
-                          // return the actual widget
-                          Category cat = data[index];
-                          return TourTypeSlider(
-                            label: cat.title!,
-                            onSliderChange: (value) {
-                              print('${cat.title} - value: $value');
+                        return ListView.separated(
+                            itemBuilder: (context, index) {
+                              // return the actual widget
+                              Category cat = data[index];
+                              return TourTypeSlider(
+                                label: cat.title!,
+                                onSliderChange: (value) {
+                                  print('${cat.title} - value: $value');
+                                },
+                              );
                             },
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(
-                            height: 16.0,
-                          );
-                        },
-                        itemCount: data!.length);
-                  },
-                ),
-              ],
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Activities()));
-                  },
-                  icon: const Icon(Icons.arrow_forward),
-                  label: const Text("Next"),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 15),
-                    textStyle: const TextStyle(fontSize: 20),
+                            separatorBuilder: (context, index) {
+                              return Divider(
+                                color: Colors.grey[300],
+                                thickness: 1.0,
+                              );
+                            },
+                            itemCount: data!.length);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Activities()));
+                    },
+                    icon: const Icon(Icons.arrow_forward),
+                    label: const Text("Next"),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 15),
+                      textStyle: const TextStyle(fontSize: 20),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -18,7 +18,7 @@ class Activity extends HiveObject {
   Activity({this.id, this.title, this.image, this.activeStatus, this.slug});
 
   Activity.fromJson(Map<String, dynamic> json) {
-     id = json['id'];
+    id = json['id'];
     title = json['title'];
     image = json['image'];
     activeStatus = json['activeStatus'];

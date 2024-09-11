@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tourism_app/models/user_details.dart';
 import 'package:tourism_app/pages/date_range_page.dart';
 import 'package:tourism_app/pages/home_page.dart';
 import 'package:tourism_app/pages/user_profile.dart';
 import 'package:tourism_app/services/user_details_service.dart';
-import 'package:image_picker/image_picker.dart';
 
 class UserDetailsPage extends StatelessWidget {
   UserDetailsPage({super.key});
@@ -22,7 +22,6 @@ class UserDetailsPage extends StatelessWidget {
   String? _selectedCountry;
   File? _image;
   final picker = ImagePicker();
-  
 
   Future<void> saveUserDetailsAndGoToNext() async {
     if (_formKey.currentState!.validate()) {
@@ -202,6 +201,7 @@ class UserDetailsPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
+                      keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
                     TextField(
@@ -213,6 +213,7 @@ class UserDetailsPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
+                      keyboardType: TextInputType.phone,
                     ),
                   ],
                 ),
@@ -228,9 +229,11 @@ class UserDetailsPage extends StatelessWidget {
                   onPressed: () {
                     saveUserDetailsAndGoToNext().then((value) {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DateRangePage()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DateRangePage(),
+                        ),
+                      );
                     });
                   },
                   icon: const Icon(Icons.arrow_forward),

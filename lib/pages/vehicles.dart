@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tourism_app/pages/categories.dart';
 import 'package:tourism_app/pages/hotels.dart';
 import 'package:tourism_app/pages/user_profile.dart';
+import 'package:tourism_app/services/vehicle_service.dart';
+import 'package:tourism_app/models/vehicle.dart';
 
 void main() {
   runApp(MyApp());
@@ -23,7 +25,7 @@ class MyApp extends StatelessWidget {
 }
 
 class Vehicles extends StatefulWidget {
-  const Vehicles({Key? key}) : super(key: key);
+  const Vehicles({super.key});
 
   @override
   State<Vehicles> createState() => _VehiclesState();
@@ -80,18 +82,23 @@ class _VehiclesState extends State<Vehicles> {
           const SizedBox(height: 8),
           HorizontalScrollableRow(
             children: List.generate(10, (index) {
-              return Container(
-                width: 200,
-                margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                color: Colors.white,
-                child: Center(
-                  child: Image.asset(
-                    "assets/car.png",
-                    height: 200,
-                    scale: 2,
-                  ),
-                ),
-              );
+              // SizedBox(
+                // child: FutureBuilder(
+                //   future: getVehicles(),
+                // ),
+              // ),
+              // return Container(
+              //   width: 200,
+              //   margin: const EdgeInsets.symmetric(horizontal: 8.0),
+              //   color: Colors.white,
+              //   child: Center(
+              //     child: Image.asset(
+              //       "assets/car.png",
+              //       height: 200,
+              //       scale: 2,
+              //     ),
+              //   ),
+              // );
             }),
           ),
           const SizedBox(height: 16),
