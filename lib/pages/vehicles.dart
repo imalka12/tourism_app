@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:tourism_app/common/horizontal_scrollable_row.dart';
+import 'package:tourism_app/common/vehicle_card.dart';
+import 'package:tourism_app/models/vehicle.dart';
 import 'package:tourism_app/pages/categories.dart';
 import 'package:tourism_app/pages/hotels.dart';
 import 'package:tourism_app/pages/user_profile.dart';
 import 'package:tourism_app/services/vehicle_service.dart';
-import 'package:tourism_app/models/vehicle.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +56,7 @@ class _VehiclesState extends State<Vehicles> {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                shape: RoundedRectangleBorder(
+                shape: const RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(20.0)),
                 ),
@@ -72,115 +74,32 @@ class _VehiclesState extends State<Vehicles> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
             child: Text(
               'Choose your vehicle',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(height: 8),
-          HorizontalScrollableRow(
-            children: List.generate(10, (index) {
-              // SizedBox(
-                // child: FutureBuilder(
-                //   future: getVehicles(),
-                // ),
-              // ),
-              // return Container(
-              //   width: 200,
-              //   margin: const EdgeInsets.symmetric(horizontal: 8.0),
-              //   color: Colors.white,
-              //   child: Center(
-              //     child: Image.asset(
-              //       "assets/car.png",
-              //       height: 200,
-              //       scale: 2,
-              //     ),
-              //   ),
-              // );
-            }),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 8),
-                Center(
-                  child: Container(
-                    width: 400,
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 255, 255, 255),
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: Offset(0, 3), // changes position of shadow
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.directions_car,
-                                  color: Colors.blue, size: 24),
-                              SizedBox(width: 8),
-                              Text(
-                                'Toyota Camry',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 16), // Space between lines
-                          Row(
-                            children: [
-                              Icon(Icons.calendar_today,
-                                  color: Colors.blue, size: 24),
-                              SizedBox(width: 8),
-                              Text(
-                                'Year: 2022',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 16), // Space between lines
-                          Row(
-                            children: [
-                              Icon(Icons.event_seat,
-                                  color: Colors.blue, size: 24),
-                              SizedBox(width: 8),
-                              Text(
-                                'Seats: 5',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          // list of vehicles from getVehicles() future. must be able to scroll horizontally.
+          FutureBuilder<List<Vehicle>>(
+            future: getVehicles(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (snapshot.data!.isEmpty) {
+                return const Center(child: Text('No vehicles found'));
+              } else {
+                return HorizontalScrollableRow(
+                  children: snapshot.data!
+                      .map((vehicle) => VehicleCard(vehicle: vehicle))
+                      .toList(),
+                );
+              }
+            },
           ),
           const Expanded(child: SizedBox()),
           Align(
@@ -190,7 +109,7 @@ class _VehiclesState extends State<Vehicles> {
               child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Hotels()));
+                      MaterialPageRoute(builder: (context) => const Hotels()));
                 },
                 icon: const Icon(Icons.arrow_forward),
                 label: const Text("Next"),
@@ -203,23 +122,6 @@ class _VehiclesState extends State<Vehicles> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class HorizontalScrollableRow extends StatelessWidget {
-  final List<Widget> children;
-
-  const HorizontalScrollableRow({Key? key, required this.children})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: children,
       ),
     );
   }

@@ -5,25 +5,39 @@ part 'hotel.g.dart';
 @HiveType(typeId: 4)
 class Hotel extends HiveObject {
   @HiveField(0)
-  String? name;
+  int? hotelId;
   @HiveField(1)
-  String? description;
+  String? name;
   @HiveField(2)
+  String? description;
+  @HiveField(3)
   String? statRating;
+  @HiveField(4)
+  String? image;
 
-  Hotel({this.name, this.description, this.statRating});
+  Hotel({
+    this.hotelId,
+    this.name,
+    this.description,
+    this.statRating,
+    this.image,
+  });
 
   Hotel.fromJson(Map<String, dynamic> json) {
+    hotelId = json['hotel_id'];
     name = json['name'];
     description = json['description'];
-    statRating = json['statRating'];
+    statRating = json['stat_rating'];
+    image = json['image'];
   }
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
+      'hotel_id': hotelId,
       'name': name,
       'description': description,
-      'statRating': statRating
+      'stat_rating': statRating,
+      'image': image,
     };
   }
 }

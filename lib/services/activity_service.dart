@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:hive/hive.dart';
 import 'package:tourism_app/models/activity.dart';
 
-const API_URL = 'http://192.168.8.101:8000/api';
+// const API_URL = 'http://192.168.8.101:8000/api';
 // const API_URL = 'http://10.0.2.2:8000/api';
-// const API_URL = 'http://192.168.1.238:8000/api';
+const API_URL = 'http://192.168.1.238:8000/api';
 final dio = Dio();
 
 /// get tour types from the backend API
@@ -28,3 +29,24 @@ Future<List<Activity>> getActivities() async {
     return <Activity>[]; // Return an empty list in case of an error
   }
 }
+
+Future<Map<String, bool>> saveActivities(
+    Map<String, bool> selectedActivities) async {
+  // save the type preferences to hive box and return the map
+  Box activitiesBox = await Hive.openBox('activities');
+
+  print('Selected activities: $selectedActivities');
+
+  // iterate over the typePrefs map and save each entry to the box
+  selectedActivities.forEach((key, value) {
+    activitiesBox.put(key, value);
+  });
+
+  return selectedActivities;
+}
+
+Map<String, dynamic> roomSelection = {
+  'roomCount': 1,
+  'roomType': 'Single',
+  'mealPlan': 'BB',
+};

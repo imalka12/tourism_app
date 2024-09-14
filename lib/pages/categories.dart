@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:tourism_app/common/tour_type_slider.dart';
 import 'package:tourism_app/models/category.dart';
 import 'package:tourism_app/pages/activities.dart';
@@ -14,7 +15,42 @@ class Categories extends StatefulWidget {
 }
 
 class _CategoriesState extends State<Categories> {
-  double preferencePercentage = 0.75; // 75%
+  late Future types;
+  final double defaultPercentage = 0.75; // 75%
+  Map<String, double> typePreferences = {};
+
+  @override
+  void initState() {
+    super.initState();
+
+    types = getCategories();
+
+    loadSaveTypePrefsFromHiveBox().then((value) {
+      if (typePreferences.isEmpty) {
+        // get each value from the types list and set it to the typePreferences map
+        types.then((value) {
+          value.forEach((element) {
+            typePreferences[element.title!] = defaultPercentage;
+          });
+        });
+      }
+    });
+  }
+
+  Future<void> loadSaveTypePrefsFromHiveBox() async {
+    // load the saved preferences from the hive box
+    Box box = await Hive.openBox('type_prefs');
+    // and set it to the typePreferences map
+    setState(() {
+      typePreferences = Map<String, double>.from(box.toMap());
+    });
+  }
+
+  void onSliderChange(String label, double value) {
+    setState(() {
+      typePreferences[label] = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +64,7 @@ class _CategoriesState extends State<Categories> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context,
-                MaterialPageRoute(builder: (context) => DateRangePage()));
+                MaterialPageRoute(builder: (context) => const DateRangePage()));
           },
         ),
         actions: [
@@ -38,7 +74,7 @@ class _CategoriesState extends State<Categories> {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                shape: RoundedRectangleBorder(
+                shape: const RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(20.0)),
                 ),
@@ -72,9 +108,9 @@ class _CategoriesState extends State<Categories> {
                   SizedBox(
                     height: 600,
                     child: FutureBuilder(
-                      future: getCategories(),
+                      future: types,
                       builder: (context, snapshot) {
-                        // show a loader as a placeholder if the connectin state is not done
+                        // show a loader as a placeholder if the connection state is not done
                         if (snapshot.connectionState != ConnectionState.done) {
                           return const Center(
                             child: CircularProgressIndicator(),
@@ -92,23 +128,26 @@ class _CategoriesState extends State<Categories> {
                         List<Category>? data = snapshot.data;
 
                         return ListView.separated(
-                            itemBuilder: (context, index) {
-                              // return the actual widget
-                              Category cat = data[index];
-                              return TourTypeSlider(
-                                label: cat.title!,
-                                onSliderChange: (value) {
-                                  print('${cat.title} - value: $value');
-                                },
-                              );
-                            },
-                            separatorBuilder: (context, index) {
-                              return Divider(
-                                color: Colors.grey[300],
-                                thickness: 1.0,
-                              );
-                            },
-                            itemCount: data!.length);
+                          itemBuilder: (context, index) {
+                            // return the actual widget
+                            Category cat = data[index];
+
+                            return TourTypeSlider(
+                              label: cat.title!,
+                              initialValue: typePreferences[cat.title!] ?? 50,
+                              onSliderChange: (value) {
+                                onSliderChange(cat.title!, value);
+                              },
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return Divider(
+                              color: Colors.grey[300],
+                              thickness: 1.0,
+                            );
+                          },
+                          itemCount: data!.length,
+                        );
                       },
                     ),
                   ),
@@ -120,10 +159,16 @@ class _CategoriesState extends State<Categories> {
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Activities()));
+                      saveCategories(typePreferences).then(
+                        (value) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Activities(),
+                            ),
+                          );
+                        },
+                      );
                     },
                     icon: const Icon(Icons.arrow_forward),
                     label: const Text("Next"),

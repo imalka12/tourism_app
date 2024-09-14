@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:google_fonts/google_fonts.dart";
 import "package:hive_flutter/hive_flutter.dart";
 import "package:tourism_app/models/activity.dart";
 import "package:tourism_app/models/category.dart";
@@ -18,6 +19,13 @@ void main() async {
   Hive.registerAdapter(VehicleAdapter());
   Hive.registerAdapter(HotelAdapter());
 
+  // open boxes
+  await Hive.openBox<UserDetails>('user_details');
+  await Hive.openBox('categories');
+  await Hive.openBox('activities');
+  await Hive.openBox('rooms');
+  await Hive.openBox('dates');
+
   runApp(const MyApp());
 }
 
@@ -30,10 +38,11 @@ class MyApp extends StatelessWidget {
       // showPerformanceOverlay: false,
       debugShowCheckedModeBanner: false,
       title: "Tourism App",
-      home: HomePage(),
+      home: const HomePage(),
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        textTheme: GoogleFonts.latoTextTheme(),
       ),
     );
   }

@@ -17,22 +17,28 @@ class HotelAdapter extends TypeAdapter<Hotel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Hotel(
-      name: fields[0] as String?,
-      description: fields[1] as String?,
-      statRating: fields[2] as String?,
+      hotelId: fields[0] as int?,
+      name: fields[1] as String?,
+      description: fields[2] as String?,
+      statRating: fields[3] as String?,
+      image: fields[4] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Hotel obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(5)
       ..writeByte(0)
-      ..write(obj.name)
+      ..write(obj.hotelId)
       ..writeByte(1)
-      ..write(obj.description)
+      ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.statRating);
+      ..write(obj.description)
+      ..writeByte(3)
+      ..write(obj.statRating)
+      ..writeByte(4)
+      ..write(obj.image);
   }
 
   @override

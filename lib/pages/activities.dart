@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:tourism_app/pages/categories.dart';
 import 'package:tourism_app/pages/user_profile.dart';
 import 'package:tourism_app/pages/vehicles.dart';
@@ -18,8 +19,8 @@ class Activities extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(
-                context, MaterialPageRoute(builder: (context) => Categories()));
+            Navigator.pop(context,
+                MaterialPageRoute(builder: (context) => const Categories()));
           },
         ),
         actions: [
@@ -29,7 +30,7 @@ class Activities extends StatelessWidget {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                shape: RoundedRectangleBorder(
+                shape: const RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.vertical(top: Radius.circular(20.0)),
                 ),
@@ -44,18 +45,53 @@ class Activities extends StatelessWidget {
           ),
         ],
       ),
-      body: PreferencesScreen(),
+      body: const PreferencesScreen(),
     );
   }
 }
 
 class PreferencesScreen extends StatefulWidget {
+  const PreferencesScreen({super.key});
+
   @override
   _PreferencesScreenState createState() => _PreferencesScreenState();
 }
 
 class _PreferencesScreenState extends State<PreferencesScreen> {
-  final Map<String, bool> _activities = {};
+  late Future activitiesList;
+  Map<String, bool> activities = {};
+
+  @override
+  void initState() {
+    super.initState();
+
+    activitiesList = getActivities();
+
+    loadSavedActivitiesFromHiveBox().then((value) {
+      if (activities.isEmpty) {
+        activitiesList.then((data) {
+          for (var activity in data) {
+            activities[activity.title!] = false;
+          }
+        });
+      }
+    });
+  }
+
+  Future<void> loadSavedActivitiesFromHiveBox() async {
+    // load the saved preferences from the hive box
+    Box box = await Hive.openBox('activities');
+    // and set it to the typePreferences map
+    setState(() {
+      activities = Map<String, bool>.from(box.toMap());
+    });
+  }
+
+  void onActivitySelected(String label, bool value) {
+    setState(() {
+      activities[label] = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,22 +109,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Expanded(
-              // child: ListView(
-              //   children: _activities.keys.map((String key) {
-              //     return CheckboxListTile(
-              //       title: Text(key),
-              //       value: _activities[key],
-              //       onChanged: (bool? value) {
-              //         setState(() {
-              //           _activities[key] = value!;
-              //         });
-              //       },
-              //     );
-              //   }).toList(),
-              // ),
-
               child: FutureBuilder(
-                future: getActivities(),
+                future: activitiesList,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
                     return const Center(
@@ -104,13 +126,11 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   return ListView.builder(
                     itemCount: data!.length,
                     itemBuilder: (context, index) {
-                      return CheckboxListTile(
-                        title: Text(data[index].title!),
-                        value: _activities[data[index].title] ?? false,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _activities[data[index].title!] = value!;
-                          });
+                      return ActivityCheckBox(
+                        title: data[index].title!,
+                        isChecked: activities[data[index].title!] ?? false,
+                        onChanged: (bool value) {
+                          onActivitySelected(data[index].title!, value);
                         },
                       );
                     },
@@ -124,10 +144,14 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const Vehicles()));
+                    saveActivities(activities).then(
+                      (value) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Vehicles()));
+                      },
+                    );
                   },
                   icon: const Icon(Icons.arrow_forward),
                   label: const Text("Next"),
@@ -142,6 +166,28 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ActivityCheckBox extends StatelessWidget {
+  final String title;
+  final bool isChecked;
+  final Function(bool) onChanged;
+  const ActivityCheckBox(
+      {super.key,
+      required this.title,
+      required this.isChecked,
+      required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return CheckboxListTile(
+      title: Text(title),
+      value: isChecked,
+      onChanged: (bool? value) {
+        onChanged(value!);
+      },
     );
   }
 }
