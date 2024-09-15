@@ -1,9 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:tourism_app/common/constants.dart';
 import 'package:tourism_app/models/hotel.dart';
 
-// const API_URL = 'http://192.168.8.101:8000/api';
-// const API_URL = 'http://10.0.2.2:8000/api';
-const API_URL = 'http://192.168.1.238:8000/api';
 final dio = Dio();
 
 /// get tour types from the backend API
@@ -34,4 +32,27 @@ Future<List<Hotel>> getHotels() async {
     print('Error fetching hotels: $e');
     return <Hotel>[]; // Return an empty list in case of an error
   }
+}
+
+List<String> getHotelTypes() {
+  List<String> types = [];
+
+  Dio().get('$API_URL/get-hotel-types',
+          options: Options(headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          }))
+      .then((response) {
+    if (response.statusCode == 200) {
+      var hotelTypesData = response;
+
+      return hotelTypesData;
+    } else {
+      print('Error: Status code ${response.statusCode}');
+    }
+  }).catchError((e) {
+    print('Error fetching hotel types: $e');
+  });
+
+  return types;
 }

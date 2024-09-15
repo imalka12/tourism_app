@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tourism_app/models/user_details.dart';
 import 'package:tourism_app/pages/categories.dart';
 import 'package:tourism_app/pages/user_details.dart';
 import 'package:tourism_app/pages/user_profile.dart';
+import 'package:tourism_app/services/user_details_service.dart';
 
 class DateRangePage extends StatefulWidget {
   const DateRangePage({super.key});
@@ -12,9 +14,22 @@ class DateRangePage extends StatefulWidget {
 
 class _DateRangePageState extends State<DateRangePage>
     with SingleTickerProviderStateMixin {
+  final _formKey = GlobalKey<FormState>();
   DateTimeRange? _selectDateTime;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  int totalDays = 0;
+
+  Future<void> saveDateRangeAndGoToNext() async {
+    if (_formKey.currentState!.validate()) {
+      var dateRangeDatails = UserDetails.fromJson(<String, dynamic>{
+        "start": _selectDateTime?.start.toString().split(' ')[0],
+        "end": _selectDateTime?.end.toString().split(' ')[0],
+        "totalDays": totalDays
+      });
+      saveUserDetails(dateRangeDatails);
+    }
+  }
 
   @override
   void initState() {
@@ -42,6 +57,11 @@ class _DateRangePageState extends State<DateRangePage>
       setState(() {
         _selectDateTime = result;
         _animationController.forward(from: 0.0);
+        if (_selectDateTime != null) {
+          totalDays =
+              _selectDateTime!.end.difference(_selectDateTime!.start).inDays +
+                  1;
+        }
       });
     }
   }
@@ -54,12 +74,6 @@ class _DateRangePageState extends State<DateRangePage>
 
   @override
   Widget build(BuildContext context) {
-    int totalDays = 0;
-    if (_selectDateTime != null) {
-      totalDays =
-          _selectDateTime!.end.difference(_selectDateTime!.start).inDays + 1;
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -101,81 +115,84 @@ class _DateRangePageState extends State<DateRangePage>
         children: [
           Center(
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Image.asset(
-                      'assets/date-picker.png',
-                      height: 300,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Image.asset(
+                        'assets/date-picker.png',
+                        height: 300,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton.icon(
-                    onPressed: _show,
-                    icon: const Icon(Icons.calendar_today),
-                    label: const Text(
-                      "When is your trip?",
-                      style: TextStyle(fontSize: 20),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      onPressed: _show,
+                      icon: const Icon(Icons.calendar_today),
+                      label: const Text(
+                        "When is your trip?",
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: _selectDateTime == null
-                        ? const Text(
-                            'No dates selected.',
-                            style: TextStyle(fontSize: 20),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.all(30),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(Icons.calendar_today,
-                                        color: Colors.indigo, size: 30),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      'Arrival date: ${_selectDateTime?.start.toString().split(' ')[0]}',
-                                      style: const TextStyle(
-                                          fontSize: 24, color: Colors.indigo),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.calendar_today,
-                                        color: Colors.indigo, size: 30),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      'Departure date: ${_selectDateTime?.end.toString().split(' ')[0]}',
-                                      style: const TextStyle(
-                                          fontSize: 24, color: Colors.indigo),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 30),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      '$totalDays Days Trip',
-                                      style: const TextStyle(
-                                          fontSize: 24, color: Colors.indigo),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                    const SizedBox(height: 20),
+                    FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: _selectDateTime == null
+                          ? const Text(
+                              'No dates selected.',
+                              style: TextStyle(fontSize: 20),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.all(30),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.calendar_today,
+                                          color: Colors.indigo, size: 30),
+                                      const SizedBox(width: 10),
+                                      Text(
+                                        'Arrival date: ${_selectDateTime?.start.toString().split(' ')[0]}',
+                                        style: const TextStyle(
+                                            fontSize: 24, color: Colors.indigo),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.calendar_today,
+                                          color: Colors.indigo, size: 30),
+                                      const SizedBox(width: 10),
+                                      Text(
+                                        'Departure date: ${_selectDateTime?.end.toString().split(' ')[0]}',
+                                        style: const TextStyle(
+                                            fontSize: 24, color: Colors.indigo),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 30),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const SizedBox(width: 10),
+                                      Text(
+                                        '$totalDays Days Trip',
+                                        style: const TextStyle(
+                                            fontSize: 24, color: Colors.indigo),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -184,8 +201,14 @@ class _DateRangePageState extends State<DateRangePage>
             right: 20,
             child: ElevatedButton.icon(
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Categories()));
+                saveDateRangeAndGoToNext().then((value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Categories(),
+                    ),
+                  );
+                });
               },
               icon: const Icon(Icons.arrow_forward),
               label: const Text("Next"),

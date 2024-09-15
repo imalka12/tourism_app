@@ -1,10 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
+import 'package:tourism_app/common/constants.dart';
 import 'package:tourism_app/models/activity.dart';
 
-// const API_URL = 'http://192.168.8.101:8000/api';
-// const API_URL = 'http://10.0.2.2:8000/api';
-const API_URL = 'http://192.168.1.238:8000/api';
 final dio = Dio();
 
 /// get tour types from the backend API

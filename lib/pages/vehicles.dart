@@ -7,25 +7,6 @@ import 'package:tourism_app/pages/hotels.dart';
 import 'package:tourism_app/pages/user_profile.dart';
 import 'package:tourism_app/services/vehicle_service.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Tourism App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const Vehicles(),
-    );
-  }
-}
-
 class Vehicles extends StatefulWidget {
   const Vehicles({super.key});
 
@@ -34,6 +15,15 @@ class Vehicles extends StatefulWidget {
 }
 
 class _VehiclesState extends State<Vehicles> {
+  Vehicle? selectedVehicle;
+  late Future<List<Vehicle>> vehiclesList;
+
+  @override
+  void initState() {
+    super.initState();
+    vehiclesList = getVehicles();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +74,7 @@ class _VehiclesState extends State<Vehicles> {
           const SizedBox(height: 8),
           // list of vehicles from getVehicles() future. must be able to scroll horizontally.
           FutureBuilder<List<Vehicle>>(
-            future: getVehicles(),
+            future: vehiclesList,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -94,9 +84,20 @@ class _VehiclesState extends State<Vehicles> {
                 return const Center(child: Text('No vehicles found'));
               } else {
                 return HorizontalScrollableRow(
-                  children: snapshot.data!
-                      .map((vehicle) => VehicleCard(vehicle: vehicle))
-                      .toList(),
+                  children: snapshot.data!.map((vehicle) {
+                    return InkWell(
+                        onTap: () {
+                          // if (selectedVehicle != null) {
+                          //   setState(() {
+                          //     selectedVehicle!.id = vehicle.id!;
+                          //   });
+                          // }
+                        },
+                        child: VehicleCard(
+                          vehicle: vehicle,
+                          isSelectedVehicle: selectedVehicle?.id == vehicle.id,
+                        ));
+                  }).toList(),
                 );
               }
             },

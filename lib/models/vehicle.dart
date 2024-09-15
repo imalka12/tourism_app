@@ -5,26 +5,29 @@ part 'vehicle.g.dart';
 @HiveType(typeId: 3)
 class Vehicle extends HiveObject {
   @HiveField(0)
-  String? title;
+  int? id;
   @HiveField(1)
-  String? make;
+  String? title;
   @HiveField(2)
-  String? model;
+  String? make;
   @HiveField(3)
-  int? yom;
+  String? model;
   @HiveField(4)
-  String? trim;
+  int? yom;
   @HiveField(5)
-  String? transmission;
+  String? trim;
   @HiveField(6)
-  String? fuel;
+  String? transmission;
   @HiveField(7)
-  int? numberOfSeats;
+  String? fuel;
   @HiveField(8)
+  int? numberOfSeats;
+  @HiveField(9)
   double? pricePerKm;
 
   Vehicle(
-      {this.title,
+      {this.id,
+      this.title,
       this.make,
       this.model,
       this.yom,
@@ -35,6 +38,7 @@ class Vehicle extends HiveObject {
       this.pricePerKm});
 
   Vehicle.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     title = json['title'];
     make = json['make'];
     model = json['model'];
@@ -48,6 +52,7 @@ class Vehicle extends HiveObject {
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
+      'id': id,
       'title': title,
       'make': make,
       'model': model,

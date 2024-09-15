@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tourism_app/models/user_details.dart';
 import 'package:tourism_app/pages/hotel_details.dart';
 import 'package:tourism_app/pages/itinerary.dart';
 import 'package:tourism_app/pages/user_profile.dart';
+import 'package:tourism_app/services/user_details_service.dart';
 
 class Budget extends StatefulWidget {
   const Budget({super.key});
@@ -11,8 +13,19 @@ class Budget extends StatefulWidget {
 }
 
 class _BudgetState extends State<Budget> {
-  final TextEditingController _budgetController = TextEditingController();
-  final TextEditingController _specialNeedsController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _budget = TextEditingController();
+  final TextEditingController _specialNeeds = TextEditingController();
+
+
+  Future<void> saveBudgetDetailsAndGoToNext() async {
+    if (_formKey.currentState!.validate()) {
+      var budgetDetail = UserDetails.fromJson(<String, dynamic>{
+        "budget": _budget.text,
+      });
+      saveUserDetails(budgetDetail);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,34 +70,37 @@ class _BudgetState extends State<Budget> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 100),
-                TextField(
-                  controller: _budgetController,
-                  decoration: InputDecoration(
-                    labelText: 'Enter your budget',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 100),
+                  TextField(
+                    controller: _budget,
+                    decoration: InputDecoration(
+                      labelText: 'Enter your budget',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      prefixIcon: Icon(Icons.attach_money),
                     ),
-                    prefixIcon: Icon(Icons.attach_money),
+                    keyboardType: TextInputType.number,
                   ),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _specialNeedsController,
-                  maxLines: 4,
-                  decoration: InputDecoration(
-                    labelText: 'Any special needs?',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _specialNeeds,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      labelText: 'Any special needs?',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      prefixIcon: Icon(Icons.notes),
                     ),
-                    prefixIcon: Icon(Icons.notes),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           Positioned(
@@ -94,10 +110,14 @@ class _BudgetState extends State<Budget> {
             child: Center(
               child: ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Itinerary()),
-                  );
+                  saveBudgetDetailsAndGoToNext().then((value) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Itinerary(),
+                      ),
+                    );
+                  });
                 },
                 icon: const Icon(Icons.arrow_forward),
                 label: const Text("Generate Itinerary"),

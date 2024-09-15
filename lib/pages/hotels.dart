@@ -18,12 +18,17 @@ class Hotels extends StatefulWidget {
 
 class _HotelsState extends State<Hotels> {
   late Future<List<Hotel>> hotels;
+  late List<String> hotelTypes; 
+
   Hotel? selectedHotel;
+  // String? _selectedHotelType;
 
   @override
   void initState() {
     super.initState();
     hotels = getHotels();
+    hotelTypes = getHotelTypes();
+
 
     // initialize selectedHotel with the first hotel in the hotels
     hotels.then((value) {
@@ -33,6 +38,14 @@ class _HotelsState extends State<Hotels> {
         });
       }
     });
+    
+
+      if (hotelTypes.isNotEmpty) {
+         print(hotelTypes);
+        // setState(() {
+        //   selectedHotel = value.first;
+        // });
+      }
   }
 
   @override
@@ -83,6 +96,34 @@ class _HotelsState extends State<Hotels> {
                   child: Text(
                     'These are our hotels',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Hotel Type',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    // value: _selectedHotelType,
+                    // getHotelTypes()
+                    items: {
+                      'eco': 'Eco-Friendly',
+                      'luxury': 'Luxury',
+                    }.entries.map((entry) {
+                      return DropdownMenuItem<String>(
+                        value: entry.key,
+                        child: Text(entry.value),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      // setState(() {
+                      //   _selectedHotelType = newValue;
+                      // });
+                    },
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -147,6 +188,18 @@ class _HotelsState extends State<Hotels> {
       ),
     );
   }
+}
+
+Widget buildStarRating(int rating) {
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: List.generate(5, (index) {
+      return Icon(
+        index < rating ? Icons.star : Icons.star_border,
+        color: Colors.yellow,
+      );
+    }),
+  );
 }
 
 class HotelTile extends StatelessWidget {
@@ -241,15 +294,29 @@ class HotelDetail extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            selectedHotel!.name!,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                          // Text(
+                          //   selectedHotel!.name!,
+                          //   style: const TextStyle(
+                          //     fontSize: 20,
+                          //     fontWeight: FontWeight.bold,
+                          //     color: Colors.black,
+                          //   ),
+                          // ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                selectedHotel!.name!,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              buildStarRating(selectedHotel?.starRating ?? 0),
+                            ],
                           ),
-                          const SizedBox(height: 16), // Space between lines
+                          const SizedBox(height: 16),
                           HTML.toRichText(
                             context,
                             selectedHotel!.description!,

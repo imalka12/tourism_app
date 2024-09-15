@@ -3,8 +3,9 @@ import 'package:tourism_app/models/vehicle.dart';
 
 class VehicleCard extends StatelessWidget {
   final Vehicle vehicle;
+  final bool isSelectedVehicle;
 
-  const VehicleCard({super.key, required this.vehicle});
+  const VehicleCard({super.key, required this.vehicle, required this.isSelectedVehicle});
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +16,7 @@ class VehicleCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: isSelectedVehicle ? Colors.blue : Colors.grey, width: 1.0),
           boxShadow: const [
             BoxShadow(
               color: Colors.grey,

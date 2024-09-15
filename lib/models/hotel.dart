@@ -11,24 +11,28 @@ class Hotel extends HiveObject {
   @HiveField(2)
   String? description;
   @HiveField(3)
-  String? statRating;
+  int? starRating;
   @HiveField(4)
   String? image;
+  @HiveField(5)
+  String? hotelType;
 
   Hotel({
     this.hotelId,
     this.name,
     this.description,
-    this.statRating,
+    this.starRating,
     this.image,
+    this.hotelType,
   });
 
   Hotel.fromJson(Map<String, dynamic> json) {
     hotelId = json['hotel_id'];
     name = json['name'];
     description = json['description'];
-    statRating = json['stat_rating'];
+    starRating = json['star_rating'];
     image = json['image'];
+    hotelType = json['hotel_type'];
   }
 
   Map<String, dynamic> toJson() {
@@ -36,8 +40,9 @@ class Hotel extends HiveObject {
       'hotel_id': hotelId,
       'name': name,
       'description': description,
-      'stat_rating': statRating,
+      'star_rating': starRating,
       'image': image,
+      'hotel_type': hotelType,
     };
   }
 }
