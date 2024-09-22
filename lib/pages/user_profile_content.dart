@@ -11,8 +11,8 @@ class UserProfileContent extends StatelessWidget {
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 10),
-        Text('Name: John Doe'),
-        Text('Email: john.doe@example.com'),
+        Text('Name: Imalka Wijerathna'),
+        Text('Email: imalka@gmail.com'),
         // Add more profile information widgets as needed
         ElevatedButton(
           onPressed: () {

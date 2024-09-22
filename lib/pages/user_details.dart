@@ -20,8 +20,6 @@ class UserDetailsPage extends StatelessWidget {
   final _emailController = TextEditingController();
   final _telephoneController = TextEditingController();
   String? _selectedCountry;
-  File? _image;
-  final picker = ImagePicker();
 
   Future<void> saveUserDetailsAndGoToNext() async {
     if (_formKey.currentState!.validate()) {
@@ -33,7 +31,6 @@ class UserDetailsPage extends StatelessWidget {
         'country': _selectedCountry,
         'email': _emailController.text,
         'telephone': _telephoneController.text,
-        // 'image': image,
       });
       saveUserDetails(userDetail);
     }

@@ -1,49 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:tourism_app/pages/budget.dart';
-import 'package:tourism_app/pages/user_profile.dart';
+import 'package:lottie/lottie.dart';
+import 'package:tourism_app/pages/itinerary_view.dart';
 
 class Itinerary extends StatelessWidget {
   const Itinerary({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // wait for 5 seconds and redirect to ItineraryView page
+    Future.delayed(const Duration(seconds: 5), () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ItineraryView()),
+      );
+    });
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Plan your trip',
-          style: TextStyle(fontSize: 24),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(
-              context,
-              MaterialPageRoute(builder: (context) => const Budget()),
-            );
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle, size: 32),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(20.0)),
-                ),
-                builder: (BuildContext context) {
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: UserProfile(),
-                  );
-                },
-              );
-            },
+        appBar: AppBar(),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Lottie.asset(
+                'assets/lottie/itinerary_generating.json',
+                width: 400,
+                height: 400,
+                fit: BoxFit.fill,
+              ),
+              const Text(
+                'We are carefully crafting the perfect itinerary for you!\nPlease wait...',
+                style: TextStyle(fontSize: 24),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 }

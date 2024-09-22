@@ -43,12 +43,12 @@ class UserProfile extends StatelessWidget {
             ),
             SizedBox(height: 20),
             Text(
-              'Name: John Doe',
+              'Name: Imalka Wijerathna',
               style: TextStyle(fontSize: 18),
             ),
             SizedBox(height: 10),
             Text(
-              'Email: johndoe@example.com',
+              'Email: imalka@gmail.com',
               style: TextStyle(fontSize: 18),
             ),
             SizedBox(height: 20),

@@ -158,7 +158,7 @@ class _DateRangePageState extends State<DateRangePage>
                                       Text(
                                         'Arrival date: ${_selectDateTime?.start.toString().split(' ')[0]}',
                                         style: const TextStyle(
-                                            fontSize: 24, color: Colors.indigo),
+                                            fontSize: 20, color: Colors.indigo),
                                       ),
                                     ],
                                   ),
@@ -171,7 +171,7 @@ class _DateRangePageState extends State<DateRangePage>
                                       Text(
                                         'Departure date: ${_selectDateTime?.end.toString().split(' ')[0]}',
                                         style: const TextStyle(
-                                            fontSize: 24, color: Colors.indigo),
+                                            fontSize: 20, color: Colors.indigo),
                                       ),
                                     ],
                                   ),

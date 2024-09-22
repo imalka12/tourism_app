@@ -8,7 +8,7 @@ final dio = Dio();
 /// get tour types from the backend API
 Future<List<Activity>> getActivities() async {
   try {
-    Response response = await dio.get('$API_URL/get-activities',
+    Response response = await dio.get('$apiUrl/get-activities',
         options: Options(headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
