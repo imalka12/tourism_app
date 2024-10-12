@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Container(
-                margin: EdgeInsets.only(top: 50),
+                margin: const EdgeInsets.only(top: 50),
                 child: Image.asset(
                   'assets/login.png',
                   height: 300,
@@ -59,30 +59,30 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DateRangePage()));
+                                builder: (context) => const DateRangePage()));
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 12),
-                        child: Text('Login', style: TextStyle(fontSize: 18)),
-                      ),
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 12),
+                        child: Text('Login', style: TextStyle(fontSize: 18)),
+                      ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Center(
                     child: TextButton(
                       onPressed: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => RegistrationPage()));
+                                builder: (context) => const RegistrationPage()));
                       },
-                      child: Text('Don\'t have an account? Register here'),
+                      child: const Text('Don\'t have an account? Register here'),
                     ),
                   ),
                 ],

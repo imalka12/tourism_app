@@ -7,8 +7,8 @@ class CustomButton extends StatelessWidget {
   const CustomButton({
     required this.text,
     required this.onPressed,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +30,8 @@ class CustomButton extends StatelessWidget {
               fontWeight: FontWeight.w800,
             ),
           ),
-          SizedBox(width: 10), // Adjust spacing between text and icon
-          Icon(Icons.arrow_forward, size: 20), // Add arrow icon after text
+          const SizedBox(width: 10), // Adjust spacing between text and icon
+          const Icon(Icons.arrow_forward, size: 20), // Add arrow icon after text
         ],
       ),
     );

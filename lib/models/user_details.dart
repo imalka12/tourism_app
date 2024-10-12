@@ -21,15 +21,24 @@ class UserDetails extends HiveObject {
   @HiveField(7)
   String? image;
   @HiveField(8)
-  String? budget;
-  @HiveField(9)
   String? start;
-  @HiveField(10)
+  @HiveField(9)
   String? end;
-  @HiveField(11)
+  @HiveField(10)
   String? totalDays;
 
-  UserDetails({this.firstName, this.lastName, this.numberOfAdults, this.numberOfChildren, this.country, this.email, this.telephone, this.image, this.budget, this.start, this.end, this.totalDays});
+  UserDetails(
+      {this.firstName,
+      this.lastName,
+      this.numberOfAdults,
+      this.numberOfChildren,
+      this.country,
+      this.email,
+      this.telephone,
+      this.image,
+      this.start,
+      this.end,
+      this.totalDays});
 
   UserDetails.fromJson(Map<String, dynamic> json) {
     firstName = json['firstName'];
@@ -40,7 +49,6 @@ class UserDetails extends HiveObject {
     email = json['email'];
     telephone = json['telephone'];
     image = json['image'];
-    budget = '${json['budget']}';
     totalDays = '${json['totalDays']}';
     start = json['start'];
     end = json['end'];
@@ -56,7 +64,6 @@ class UserDetails extends HiveObject {
       'email': email,
       'telephone': telephone,
       'image': image,
-      'budget': budget,
       'totalDays': totalDays,
       'start': start,
       'end': end,

@@ -12,7 +12,7 @@ class HomePage extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -41,26 +41,26 @@ class HomePage extends StatelessWidget {
             top: 60,
             right: 20,
             child: IconButton(
-              icon: Icon(Icons.account_circle, color: Colors.white, size: 50),
+              icon: const Icon(Icons.account_circle, color: Colors.white, size: 50),
               onPressed: () {
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
-                  shape: RoundedRectangleBorder(
+                  shape: const RoundedRectangleBorder(
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(20.0)),
                   ),
                   builder: (BuildContext context) {
-                    return Container(
+                    return SizedBox(
                       height: MediaQuery.of(context).size.height,
-                      child: UserProfile(),
+                      child: const UserProfile(),
                     );
                   },
                 );
               },
             ),
           ),
-          Positioned.fill(
+          const Positioned.fill(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

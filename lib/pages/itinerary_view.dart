@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:hive/hive.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 
 class ItineraryView extends StatefulWidget {
@@ -13,15 +14,20 @@ class _ItineraryViewState extends State<ItineraryView> {
   String _markdownString = "";
 
   Future<void> _loadMarkdownFile() async {
-    final markdownString = await rootBundle.loadString('assets/sample.md');
-    setState(() {
-      _markdownString = markdownString;
-    });
+    final header = await rootBundle.loadString('assets/sample.md');
+
+    var itinbox = Hive.box('generated_itinerary');
+    String? itinerary = itinbox.get('itinerary');
+
+    if (itinerary != null) {
+      setState(() {
+        _markdownString = "$header\n$itinerary";
+      });
+    }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     _loadMarkdownFile();

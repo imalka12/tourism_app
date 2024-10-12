@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 class UserProfile extends StatelessWidget {
+  const UserProfile({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
         height: MediaQuery.of(context).size.height,
-        padding: EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 16),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.only(top: 60, left: 16, right: 16, bottom: 16),
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
@@ -20,7 +22,7 @@ class UserProfile extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'User Profile',
                   style: TextStyle(
                     fontSize: 24,
@@ -28,33 +30,33 @@ class UserProfile extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close),
+                  icon: const Icon(Icons.close),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
               ],
             ),
-            SizedBox(height: 20),
-            CircleAvatar(
+            const SizedBox(height: 20),
+            const CircleAvatar(
               radius: 50,
               backgroundImage: AssetImage(
                   'assets/user.png'),
             ),
-            SizedBox(height: 20),
-            Text(
-              'Name: Imalka Wijerathna',
+            const SizedBox(height: 20),
+            const Text(
+              'Name: John Doe',
               style: TextStyle(fontSize: 18),
             ),
-            SizedBox(height: 10),
-            Text(
-              'Email: imalka@gmail.com',
+            const SizedBox(height: 10),
+            const Text(
+              'Email: johndoe@example.com',
               style: TextStyle(fontSize: 18),
             ),
-            SizedBox(height: 20),
-            Divider(),
-            SizedBox(height: 10),
-            Text(
+            const SizedBox(height: 20),
+            const Divider(),
+            const SizedBox(height: 10),
+            const Text(
               'Account Settings',
               style: TextStyle(
                 fontSize: 20,
@@ -62,18 +64,18 @@ class UserProfile extends StatelessWidget {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Edit Profile'),
+              leading: const Icon(Icons.person),
+              title: const Text('Edit Profile'),
               onTap: () {},
             ),
             ListTile(
-              leading: Icon(Icons.lock),
-              title: Text('Change Password'),
+              leading: const Icon(Icons.lock),
+              title: const Text('Change Password'),
               onTap: () {},
             ),
             ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Logout'),
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
               onTap: () {},
             ),
           ],

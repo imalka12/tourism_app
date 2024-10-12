@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:hive/hive.dart';
 import 'package:tourism_app/common/constants.dart';
 import 'package:tourism_app/models/hotel.dart';
 
@@ -21,8 +22,6 @@ Future<List<Hotel>> getHotels() async {
         hotels.add(Hotel.fromJson(hotel));
       }
 
-      print('Hotels: $hotels');
-
       return hotels;
     } else {
       // Handle other status codes as needed
@@ -34,26 +33,39 @@ Future<List<Hotel>> getHotels() async {
   }
 }
 
-List<String> getHotelTypes() {
-  List<String> types = [];
+Future<Map<String, String>> getHotelTypes() async {
+  try {
+    Response response = await dio.get('$apiUrl/get-hotel-types',
+        options: Options(headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }));
 
-  Dio()
-      .get('$apiUrl/get-hotel-types',
-          options: Options(headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          }))
-      .then((response) {
     if (response.statusCode == 200) {
-      var hotelTypesData = response;
-
-      return hotelTypesData;
+      Map<String, String> hotelTypes = Map<String, String>.from(response.data);
+      print(hotelTypes);
+      return hotelTypes;
     } else {
-      print('Error: Status code ${response.statusCode}');
+      return <String, String>{};
     }
-  }).catchError((e) {
-    print('Error fetching hotel types: $e');
-  });
+  } catch (e) {
+    return <String, String>{}; // Return an empty map in case of an error
+  }
+}
 
-  return types;
+// save hotel type selection to hotel_type_prefs hive box
+Future<String?> saveHotelTypePrefs(String? hotelType) async {
+  // save the type preferences to hive box and return the map
+  Box typePrefsBox = Hive.box('hotel_type_prefs');
+  typePrefsBox.put('hotel_type', hotelType);
+
+  return hotelType;
+}
+
+// get selected hotel type from hotel_type_prefs hive box
+Future<String?> getHotelTypePrefs() async {
+  Box typePrefsBox = Hive.box('hotel_type_prefs');
+  String? hotelType = typePrefsBox.get('hotel_type', defaultValue: '');
+
+  return hotelType;
 }

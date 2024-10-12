@@ -31,12 +31,25 @@ Future<List<Category>> getCategories() async {
 Future<Map<String, double>> saveCategories(
     Map<String, double> typePrefs) async {
   // save the type preferences to hive box and return the map
-  Box typePrefsBox = await Hive.openBox('type_prefs');
+  Box typePrefsBox = await Hive.box('type_prefs');
 
   // iterate over the typePrefs map and save each entry to the box
   typePrefs.forEach((key, value) {
     typePrefsBox.put(key, value);
   });
+
+  return typePrefs;
+}
+
+Future<Map<String, double>> getTypePrefs() async {
+  // get the type preferences from the hive box
+  Box typePrefsBox = await Hive.box('type_prefs');
+
+  // iterate over the keys in the box and return the map
+  Map<String, double> typePrefs = {};
+  for (var key in typePrefsBox.keys) {
+    typePrefs[key] = typePrefsBox.get(key);
+  }
 
   return typePrefs;
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:tourism_app/pages/categories.dart';
 import 'package:tourism_app/pages/user_profile.dart';
 import 'package:tourism_app/pages/vehicles.dart';
@@ -13,7 +12,7 @@ class Activities extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Plan your trip',
+          'Activities',
           style: TextStyle(fontSize: 24),
         ),
         leading: IconButton(
@@ -37,7 +36,7 @@ class Activities extends StatelessWidget {
                 builder: (BuildContext context) {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height,
-                    child: UserProfile(),
+                    child: const UserProfile(),
                   );
                 },
               );
@@ -79,11 +78,10 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   }
 
   Future<void> loadSavedActivitiesFromHiveBox() async {
-    // load the saved preferences from the hive box
-    Box box = await Hive.openBox('activities');
-    // and set it to the typePreferences map
-    setState(() {
-      activities = Map<String, bool>.from(box.toMap());
+    getActivitiesPrefs().then((value) {
+      setState(() {
+        activities = Map<String, bool>.from(value);
+      });
     });
   }
 

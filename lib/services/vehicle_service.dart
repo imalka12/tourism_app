@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:hive/hive.dart';
 import 'package:tourism_app/common/constants.dart';
 import 'package:tourism_app/models/vehicle.dart';
 
@@ -25,4 +26,16 @@ Future<List<Vehicle>> getVehicles() async {
     print('Error fetching categories: $e');
     return <Vehicle>[]; // Return an empty list in case of an error
   }
+}
+
+// save vehicle object to the vehicles box
+Future<void> saveVehicle(Vehicle vehicle) async {
+  var box = Hive.box<Vehicle>('vehicles');
+  await box.put('vehicle', vehicle);
+}
+
+// get selected vehicle
+Future<Vehicle?> getSelectedVehicle() async {
+  var box = Hive.box<Vehicle>('vehicles');
+  return box.get('vehicle');
 }

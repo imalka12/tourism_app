@@ -25,17 +25,16 @@ class UserDetailsAdapter extends TypeAdapter<UserDetails> {
       email: fields[5] as String?,
       telephone: fields[6] as String?,
       image: fields[7] as String?,
-      budget: fields[8] as String?,
-      start: fields[9] as String?,
-      end: fields[10] as String?,
-      totalDays: fields[11] as String?,
+      start: fields[8] as String?,
+      end: fields[9] as String?,
+      totalDays: fields[10] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, UserDetails obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.firstName)
       ..writeByte(1)
@@ -53,12 +52,10 @@ class UserDetailsAdapter extends TypeAdapter<UserDetails> {
       ..writeByte(7)
       ..write(obj.image)
       ..writeByte(8)
-      ..write(obj.budget)
-      ..writeByte(9)
       ..write(obj.start)
-      ..writeByte(10)
+      ..writeByte(9)
       ..write(obj.end)
-      ..writeByte(11)
+      ..writeByte(10)
       ..write(obj.totalDays);
   }
 

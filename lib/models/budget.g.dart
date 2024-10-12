@@ -1,44 +1,35 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'activity.dart';
+part of 'budget.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class ActivityAdapter extends TypeAdapter<Activity> {
+class BudgetAdapter extends TypeAdapter<Budget> {
   @override
-  final int typeId = 0;
+  final int typeId = 6;
 
   @override
-  Activity read(BinaryReader reader) {
+  Budget read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Activity(
-      id: fields[0] as int?,
-      title: fields[1] as String?,
-      image: fields[2] as String?,
-      activeStatus: fields[3] as String?,
-      slug: fields[4] as String?,
+    return Budget(
+      amount: fields[0] as double?,
+      specialNeeds: fields[1] as String?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Activity obj) {
+  void write(BinaryWriter writer, Budget obj) {
     writer
-      ..writeByte(5)
-      ..writeByte(0)
-      ..write(obj.id)
-      ..writeByte(1)
-      ..write(obj.title)
       ..writeByte(2)
-      ..write(obj.image)
-      ..writeByte(3)
-      ..write(obj.activeStatus)
-      ..writeByte(4)
-      ..write(obj.slug);
+      ..writeByte(0)
+      ..write(obj.amount)
+      ..writeByte(1)
+      ..write(obj.specialNeeds);
   }
 
   @override
@@ -47,7 +38,7 @@ class ActivityAdapter extends TypeAdapter<Activity> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ActivityAdapter &&
+      other is BudgetAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

@@ -18,17 +18,24 @@ class Hotels extends StatefulWidget {
 
 class _HotelsState extends State<Hotels> {
   late Future<List<Hotel>> hotels;
-  late List<String> hotelTypes; 
+  late Future<Map<String, String>> hotelTypes;
 
   Hotel? selectedHotel;
-  // String? _selectedHotelType;
+  String? _selectedHotelType = '3_star';
+
+  void loadSavedHotelType() async {
+    getHotelTypePrefs().then((value) {
+      setState(() {
+        _selectedHotelType = value;
+      });
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     hotels = getHotels();
     hotelTypes = getHotelTypes();
-
 
     // initialize selectedHotel with the first hotel in the hotels
     hotels.then((value) {
@@ -38,14 +45,9 @@ class _HotelsState extends State<Hotels> {
         });
       }
     });
-    
 
-      if (hotelTypes.isNotEmpty) {
-         print(hotelTypes);
-        // setState(() {
-        //   selectedHotel = value.first;
-        // });
-      }
+    // load the saved hotel type
+    loadSavedHotelType();
   }
 
   @override
@@ -53,7 +55,7 @@ class _HotelsState extends State<Hotels> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Plan your trip',
+          'Hotel Preference',
           style: TextStyle(fontSize: 24),
         ),
         leading: IconButton(
@@ -77,7 +79,7 @@ class _HotelsState extends State<Hotels> {
                 builder: (BuildContext context) {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height,
-                    child: UserProfile(),
+                    child: const UserProfile(),
                   );
                 },
               );
@@ -99,32 +101,51 @@ class _HotelsState extends State<Hotels> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      labelText: 'Hotel Type',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    // value: _selectedHotelType,
-                    // getHotelTypes()
-                    items: {
-                      'eco': 'Eco-Friendly',
-                      'luxury': 'Luxury',
-                    }.entries.map((entry) {
-                      return DropdownMenuItem<String>(
-                        value: entry.key,
-                        child: Text(entry.value),
+                FutureBuilder(
+                  future: hotelTypes,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else {
+                      if (!snapshot.hasData) {
+                        return const CircularProgressIndicator();
+                      }
+
+                      Map<String, String> types =
+                          snapshot.data as Map<String, String>;
+
+                      // Ensure _selectedHotelType is valid
+                      if (!types.containsKey(_selectedHotelType)) {
+                        _selectedHotelType = null;
+                      }
+
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            labelText: 'Hotel Type',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          value: _selectedHotelType,
+                          items: types.entries.map((entry) {
+                            return DropdownMenuItem<String>(
+                              value: entry.key,
+                              child: Text(entry.value),
+                            );
+                          }).toList(),
+                          onChanged: (newValue) {
+                            setState(() {
+                              _selectedHotelType = newValue;
+                            });
+                          },
+                        ),
                       );
-                    }).toList(),
-                    onChanged: (newValue) {
-                      // setState(() {
-                      //   _selectedHotelType = newValue;
-                      // });
-                    },
-                  ),
+                    }
+                  },
                 ),
                 const SizedBox(height: 8),
                 FutureBuilder<List<Hotel>>(
@@ -170,9 +191,16 @@ class _HotelsState extends State<Hotels> {
             bottom: 20.0,
             child: ElevatedButton.icon(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HotelDetails()),
+                // save selected hotel type and move to next screen
+                saveHotelTypePrefs(_selectedHotelType).then(
+                  (value) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HotelDetails(),
+                      ),
+                    );
+                  },
                 );
               },
               icon: const Icon(Icons.arrow_forward),

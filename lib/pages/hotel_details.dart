@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tourism_app/models/hotel_room.dart';
-import 'package:tourism_app/pages/budget.dart';
+import 'package:tourism_app/pages/budget_page.dart';
 import 'package:tourism_app/pages/home_page.dart';
 import 'package:tourism_app/pages/user_profile.dart';
 import 'package:tourism_app/services/hotel_room_service.dart';
@@ -38,12 +38,29 @@ class _HotelDetailsState extends State<HotelDetails> {
     }
   }
 
+  void loadHotelRoomDetails() async {
+    var hotelRoomDetails = await getHotelRoomDetails();
+    if (hotelRoomDetails != null) {
+      setState(() {
+        _selectedRoomType = hotelRoomDetails.roomType;
+        _numberOfRoomsController.text = hotelRoomDetails.numberOfRooms!;
+        _selectedMealType = hotelRoomDetails.mealType;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadHotelRoomDetails();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Plan your trip',
+          'Hotel Room Preferences',
           style: TextStyle(fontSize: 24),
         ),
         leading: IconButton(
@@ -69,7 +86,7 @@ class _HotelDetailsState extends State<HotelDetails> {
                 builder: (BuildContext context) {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height,
-                    child: UserProfile(),
+                    child: const UserProfile(),
                   );
                 },
               );
@@ -175,7 +192,7 @@ class _HotelDetailsState extends State<HotelDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const Budget(),
+                          builder: (context) => const BudgetPage(),
                         ),
                       );
                     });

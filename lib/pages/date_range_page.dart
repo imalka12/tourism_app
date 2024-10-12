@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tourism_app/models/user_details.dart';
 import 'package:tourism_app/pages/categories.dart';
 import 'package:tourism_app/pages/user_details.dart';
-import 'package:tourism_app/pages/user_profile.dart';
 import 'package:tourism_app/services/user_details_service.dart';
 
 class DateRangePage extends StatefulWidget {
@@ -27,7 +26,7 @@ class _DateRangePageState extends State<DateRangePage>
         "end": _selectDateTime?.end.toString().split(' ')[0],
         "totalDays": totalDays
       });
-      saveUserDetails(dateRangeDatails);
+      saveDateDetails(dateRangeDatails);
     }
   }
 
@@ -42,6 +41,22 @@ class _DateRangePageState extends State<DateRangePage>
       parent: _animationController,
       curve: Curves.easeIn,
     );
+
+    loadDateSelection();
+  }
+
+  void loadDateSelection() async {
+    UserDetails? userDetails = await getUserDetails();
+    if (userDetails!.start != null) {
+      setState(() {
+        _selectDateTime = DateTimeRange(
+          start: DateTime.parse(userDetails.start!),
+          end: DateTime.parse(userDetails.end!),
+        );
+        totalDays = int.parse(userDetails.totalDays!);
+      });
+      _animationController.forward(from: 0.0);
+    }
   }
 
   void _show() async {
@@ -77,7 +92,7 @@ class _DateRangePageState extends State<DateRangePage>
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Plan your trip',
+          'Travelling Period',
           style: TextStyle(fontSize: 24),
         ),
         leading: IconButton(
@@ -85,7 +100,7 @@ class _DateRangePageState extends State<DateRangePage>
           onPressed: () {
             Navigator.pop(
               context,
-              MaterialPageRoute(builder: (context) => UserDetailsPage()),
+              MaterialPageRoute(builder: (context) => const UserDetailsPage()),
             );
           },
         ),
@@ -93,20 +108,21 @@ class _DateRangePageState extends State<DateRangePage>
           IconButton(
             icon: const Icon(Icons.account_circle, size: 32),
             onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(20.0)),
-                ),
-                builder: (BuildContext context) {
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: UserProfile(),
-                  );
-                },
-              );
+              loadDateSelection();
+              // showModalBottomSheet(
+              //   context: context,
+              //   isScrollControlled: true,
+              //   shape: const RoundedRectangleBorder(
+              //     borderRadius:
+              //         BorderRadius.vertical(top: Radius.circular(20.0)),
+              //   ),
+              //   builder: (BuildContext context) {
+              //     return SizedBox(
+              //       height: MediaQuery.of(context).size.height,
+              //       child: const UserProfile(),
+              //     );
+              //   },
+              // );
             },
           ),
         ],
@@ -158,7 +174,7 @@ class _DateRangePageState extends State<DateRangePage>
                                       Text(
                                         'Arrival date: ${_selectDateTime?.start.toString().split(' ')[0]}',
                                         style: const TextStyle(
-                                            fontSize: 20, color: Colors.indigo),
+                                            fontSize: 24, color: Colors.indigo),
                                       ),
                                     ],
                                   ),
@@ -171,7 +187,7 @@ class _DateRangePageState extends State<DateRangePage>
                                       Text(
                                         'Departure date: ${_selectDateTime?.end.toString().split(' ')[0]}',
                                         style: const TextStyle(
-                                            fontSize: 20, color: Colors.indigo),
+                                            fontSize: 24, color: Colors.indigo),
                                       ),
                                     ],
                                   ),

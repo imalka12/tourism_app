@@ -1,2 +1,2 @@
-const String apiUrl = 'http://172.20.10.7:8000/api';
-const String storageUrl = 'http://172.20.10.7:8000/storage/';
+const String apiUrl = 'http://192.168.8.100:8000/api';
+const String storageUrl = 'http://192.168.8.100:8000/storage/';

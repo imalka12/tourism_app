@@ -57,7 +57,7 @@ class _CategoriesState extends State<Categories> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Plan your trip',
+          'Holiday Types',
           style: TextStyle(fontSize: 24),
         ),
         leading: IconButton(
@@ -81,7 +81,7 @@ class _CategoriesState extends State<Categories> {
                 builder: (BuildContext context) {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height,
-                    child: UserProfile(),
+                    child: const UserProfile(),
                   );
                 },
               );

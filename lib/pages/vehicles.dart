@@ -22,6 +22,30 @@ class _VehiclesState extends State<Vehicles> {
   void initState() {
     super.initState();
     vehiclesList = getVehicles();
+
+    // get selected vehicle from the box
+    getSelectedVehicle().then((vehicle) {
+      setState(() {
+        selectedVehicle = vehicle;
+      });
+    });
+  }
+
+  void saveVehicleAndNavigate() {
+    if (selectedVehicle != null) {
+      saveVehicle(selectedVehicle!);
+
+      // navigate to next page
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const Hotels()));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a vehicle'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   @override
@@ -29,7 +53,7 @@ class _VehiclesState extends State<Vehicles> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Plan your trip',
+          'Vehicle Preference',
           style: TextStyle(fontSize: 24),
         ),
         leading: IconButton(
@@ -53,7 +77,7 @@ class _VehiclesState extends State<Vehicles> {
                 builder: (BuildContext context) {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height,
-                    child: UserProfile(),
+                    child: const UserProfile(),
                   );
                 },
               );
@@ -85,18 +109,15 @@ class _VehiclesState extends State<Vehicles> {
               } else {
                 return HorizontalScrollableRow(
                   children: snapshot.data!.map((vehicle) {
-                    return InkWell(
-                        onTap: () {
-                          // if (selectedVehicle != null) {
-                          //   setState(() {
-                          //     selectedVehicle!.id = vehicle.id!;
-                          //   });
-                          // }
-                        },
-                        child: VehicleCard(
-                          vehicle: vehicle,
-                          isSelectedVehicle: selectedVehicle?.id == vehicle.id,
-                        ));
+                    return VehicleCard(
+                      vehicle: vehicle,
+                      isSelectedVehicle: selectedVehicle?.id == vehicle.id,
+                      onVehicleSelected: (p0) {
+                        setState(() {
+                          selectedVehicle = vehicle;
+                        });
+                      },
+                    );
                   }).toList(),
                 );
               }
@@ -109,8 +130,7 @@ class _VehiclesState extends State<Vehicles> {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const Hotels()));
+                  saveVehicleAndNavigate();
                 },
                 icon: const Icon(Icons.arrow_forward),
                 label: const Text("Next"),

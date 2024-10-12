@@ -19,7 +19,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: Container(
-                margin: EdgeInsets.only(top: 50),
+                margin: const EdgeInsets.only(top: 50),
                 child: Image.asset(
                   'assets/register.png',
                   height: 300,
@@ -68,17 +68,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => DateRangePage()));
+                            builder: (context) => const DateRangePage()));
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 12),
-                        child: Text('Register', style: TextStyle(fontSize: 18)),
-                      ),
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 12),
+                        child: Text('Register', style: TextStyle(fontSize: 18)),
                       ),
                     ),
                   ),

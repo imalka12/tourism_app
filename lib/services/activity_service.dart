@@ -43,6 +43,20 @@ Future<Map<String, bool>> saveActivities(
   return selectedActivities;
 }
 
+// get saved activities
+Future<Map<String, bool>> getActivitiesPrefs() async {
+  // get the type preferences from the hive box
+  Box activitiesBox = await Hive.openBox('activities');
+
+  // iterate over the keys in the box and return the map
+  Map<String, bool> activities = {};
+  for (var key in activitiesBox.keys) {
+    activities[key] = activitiesBox.get(key);
+  }
+
+  return activities;
+}
+
 Map<String, dynamic> roomSelection = {
   'roomCount': 1,
   'roomType': 'Single',

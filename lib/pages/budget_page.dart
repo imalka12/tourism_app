@@ -1,29 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:tourism_app/models/user_details.dart';
+import 'package:tourism_app/models/budget.dart';
 import 'package:tourism_app/pages/hotel_details.dart';
-import 'package:tourism_app/pages/itinerary.dart';
+import 'package:tourism_app/pages/itinerary_loader.dart';
 import 'package:tourism_app/pages/user_profile.dart';
-import 'package:tourism_app/services/user_details_service.dart';
 
-class Budget extends StatefulWidget {
-  const Budget({super.key});
+import '../services/budget_service.dart';
+
+class BudgetPage extends StatefulWidget {
+  const BudgetPage({super.key});
 
   @override
-  State<Budget> createState() => _BudgetState();
+  State<BudgetPage> createState() => _BudgetPageState();
 }
 
-class _BudgetState extends State<Budget> {
+class _BudgetPageState extends State<BudgetPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _budget = TextEditingController();
   final TextEditingController _specialNeeds = TextEditingController();
 
-
-  Future<void> saveBudgetDetailsAndGoToNext() async {
+  Future<void> submitForm() async {
     if (_formKey.currentState!.validate()) {
-      var budgetDetail = UserDetails.fromJson(<String, dynamic>{
-        "budget": _budget.text,
-      });
-      saveUserDetails(budgetDetail);
+      Budget budget = Budget(
+        amount: double.parse(_budget.text),
+        specialNeeds: _specialNeeds.text,
+      );
+      await saveBudgetData(budget);
+
+      // navigate to itinerary loader page
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ItineraryLoader(),
+        ),
+      );
     }
   }
 
@@ -32,7 +41,7 @@ class _BudgetState extends State<Budget> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Plan your trip',
+          'Budget and Special Needs',
           style: TextStyle(fontSize: 24),
         ),
         leading: IconButton(
@@ -58,7 +67,7 @@ class _BudgetState extends State<Budget> {
                 builder: (BuildContext context) {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height,
-                    child: UserProfile(),
+                    child: const UserProfile(),
                   );
                 },
               );
@@ -83,7 +92,7 @@ class _BudgetState extends State<Budget> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      prefixIcon: Icon(Icons.attach_money),
+                      prefixIcon: const Icon(Icons.attach_money),
                     ),
                     keyboardType: TextInputType.number,
                   ),
@@ -96,8 +105,10 @@ class _BudgetState extends State<Budget> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      prefixIcon: Icon(Icons.notes),
+                      prefixIcon: const Icon(Icons.notes),
+                      floatingLabelAlignment: FloatingLabelAlignment.start,
                     ),
+                    textAlignVertical: TextAlignVertical.top,
                   ),
                 ],
               ),
@@ -110,11 +121,11 @@ class _BudgetState extends State<Budget> {
             child: Center(
               child: ElevatedButton.icon(
                 onPressed: () {
-                  saveBudgetDetailsAndGoToNext().then((value) {
+                  submitForm().then((value) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const Itinerary(),
+                        builder: (context) => const ItineraryLoader(),
                       ),
                     );
                   });

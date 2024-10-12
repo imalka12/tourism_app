@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tourism_app/models/user_details.dart';
@@ -8,18 +6,25 @@ import 'package:tourism_app/pages/home_page.dart';
 import 'package:tourism_app/pages/user_profile.dart';
 import 'package:tourism_app/services/user_details_service.dart';
 
-class UserDetailsPage extends StatelessWidget {
-  UserDetailsPage({super.key});
+class UserDetailsPage extends StatefulWidget {
+  const UserDetailsPage({super.key});
 
+  @override
+  State<UserDetailsPage> createState() => _UserDetailsPageState();
+}
+
+class _UserDetailsPageState extends State<UserDetailsPage> {
   final _formKey = GlobalKey<FormState>();
+
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _numberOfAdultsController = TextEditingController();
   final _numberOfChildrenController = TextEditingController();
-  final _countryController = TextEditingController();
   final _emailController = TextEditingController();
   final _telephoneController = TextEditingController();
   String? _selectedCountry;
+
+  final picker = ImagePicker();
 
   Future<void> saveUserDetailsAndGoToNext() async {
     if (_formKey.currentState!.validate()) {
@@ -31,9 +36,31 @@ class UserDetailsPage extends StatelessWidget {
         'country': _selectedCountry,
         'email': _emailController.text,
         'telephone': _telephoneController.text,
+        // 'image': image,
       });
       saveUserDetails(userDetail);
     }
+  }
+
+  void readUserDetails() async {
+    var userDetails = await getUserDetails();
+    if (userDetails != null) {
+      _firstNameController.text = userDetails.firstName ?? '';
+      _lastNameController.text = userDetails.lastName ?? '';
+      _numberOfAdultsController.text = userDetails.numberOfAdults ?? '';
+      _numberOfChildrenController.text = userDetails.numberOfChildren ?? '';
+      _emailController.text = userDetails.email ?? '';
+      _telephoneController.text = userDetails.telephone ?? '';
+      setState(() {
+        _selectedCountry = userDetails.country ?? 'Sri Lanka';
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    readUserDetails();
   }
 
   @override
@@ -41,7 +68,7 @@ class UserDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Plan your trip',
+          'Your Details',
           style: TextStyle(fontSize: 24),
         ),
         leading: IconButton(
@@ -67,7 +94,7 @@ class UserDetailsPage extends StatelessWidget {
                 builder: (BuildContext context) {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height,
-                    child: UserProfile(),
+                    child: const UserProfile(),
                   );
                 },
               );
@@ -112,6 +139,7 @@ class UserDetailsPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
+                              textInputAction: TextInputAction.next,
                             ),
                           ),
                         ),
@@ -128,6 +156,7 @@ class UserDetailsPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
+                              textInputAction: TextInputAction.next,
                             ),
                           ),
                         ),
@@ -146,6 +175,7 @@ class UserDetailsPage extends StatelessWidget {
                             ),
                           ),
                           keyboardType: TextInputType.number,
+                          textInputAction: TextInputAction.next,
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -160,6 +190,7 @@ class UserDetailsPage extends StatelessWidget {
                             ),
                           ),
                           keyboardType: TextInputType.number,
+                          textInputAction: TextInputAction.next,
                         ),
                       )
                     ]),
@@ -199,6 +230,7 @@ class UserDetailsPage extends StatelessWidget {
                         ),
                       ),
                       keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: 16),
                     TextField(
@@ -211,6 +243,7 @@ class UserDetailsPage extends StatelessWidget {
                         ),
                       ),
                       keyboardType: TextInputType.phone,
+                      textInputAction: TextInputAction.done,
                     ),
                   ],
                 ),
